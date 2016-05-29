@@ -1,0 +1,210 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf460
+{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;\f1\fnil\fcharset0 Menlo-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green128\blue0;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \{\uc0\u8232     
+\f1\b \cf2 'method' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'GET'
+\f0\b0 \cf0 ,\uc0\u8232     
+\f1\b \cf2 'path' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 '/joggl'
+\f0\b0 \cf0 ,\uc0\u8232     
+\f1\b \cf2 'params' 
+\f0\b0 \cf0 : [\uc0\u8232         \{\u8232             
+\f1\b \cf2 'name' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'user_agent'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'description' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'name or email of the person making the request'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'type' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'string'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'mandatory' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'yes'\uc0\u8232         
+\f0\b0 \cf0 \},\uc0\u8232         \{\u8232             
+\f1\b \cf2 'name' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'toggl_start_date'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'description' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'start date for fetching toggl data'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'type' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'YYYY-MM-DD'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'mandatory' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'no'\uc0\u8232         
+\f0\b0 \cf0 \},\uc0\u8232         \{\u8232             
+\f1\b \cf2 'name' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'toggl_end_date'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'description' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'end date for fetching toggl data'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'type' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'YYYY-mm-DD'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'mandatory' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'no'\uc0\u8232         
+\f0\b0 \cf0 \},\uc0\u8232         \{\u8232             
+\f1\b \cf2 'name' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'toggl_token'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'description' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'Access token required for authentication'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'type' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'string'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'mandatory' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'yes'\uc0\u8232         
+\f0\b0 \cf0 \},\uc0\u8232         \{\u8232             
+\f1\b \cf2 'name' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'toggl_workspace_id'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'description' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'The workspace that needs to be queried'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'type' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'string'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'mandatory' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'yes'\uc0\u8232         
+\f0\b0 \cf0 \},\uc0\u8232         \{\u8232             
+\f1\b \cf2 'name' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'jira_username'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'description' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'Username for JIRA authentication'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'type' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'string'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'mandatory' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'yes'\uc0\u8232         
+\f0\b0 \cf0 \},\uc0\u8232         \{\u8232             
+\f1\b \cf2 'name' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'jira_password'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'description' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'Password for JIRA authentication'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'type' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'string'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'mandatory' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'yes'\uc0\u8232         
+\f0\b0 \cf0 \},\uc0\u8232         \{\u8232             
+\f1\b \cf2 'name' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'jira_jql'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'description' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'JQL query to fetch JIRA data'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'type' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'string'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'mandatory' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'No, but if present all other JIRA filters will be ignored.'\uc0\u8232         
+\f0\b0 \cf0 \},\uc0\u8232         \{\u8232             
+\f1\b \cf2 'name' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'jira_due_date_start'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'description' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'Start initial due date to be filtered on'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'type' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'YYYY-MM-DD'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'mandatory' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'yes'\uc0\u8232         
+\f0\b0 \cf0 \},\uc0\u8232         \{\u8232             
+\f1\b \cf2 'name'
+\f0\b0 \cf0 : 
+\f1\b \cf2 'jira_due_date_end'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'description'
+\f0\b0 \cf0 : 
+\f1\b \cf2 'End initial due date to be filtered on'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'type'
+\f0\b0 \cf0 : 
+\f1\b \cf2 'YYYY-MM-DD'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'mandatory'
+\f0\b0 \cf0 : 
+\f1\b \cf2 'yes'\uc0\u8232         
+\f0\b0 \cf0 \},\uc0\u8232         \{\u8232             
+\f1\b \cf2 'name' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'jira_resolution_date_start'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'description' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'Start resolution date to be filtered on'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'type' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'YYYY-MM-DD'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'mandatory' 
+\f0\b0 \cf0 : 
+\f1\b \cf2 'no'\uc0\u8232         
+\f0\b0 \cf0 \},\uc0\u8232         \{\u8232             
+\f1\b \cf2 'name'
+\f0\b0 \cf0 : 
+\f1\b \cf2 'jira_resolution_date_end'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'description'
+\f0\b0 \cf0 : 
+\f1\b \cf2 'End resolution date to be filtered on'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'type'
+\f0\b0 \cf0 : 
+\f1\b \cf2 'YYYY-MM-DD'
+\f0\b0 \cf0 ,\uc0\u8232             
+\f1\b \cf2 'mandatory'
+\f0\b0 \cf0 : 
+\f1\b \cf2 'no'\uc0\u8232         
+\f0\b0 \cf0 \}\uc0\u8232     ]\u8232 \}\
+}
