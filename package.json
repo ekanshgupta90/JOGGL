@@ -1,0 +1,16 @@
+{
+  "name": "EDISS",
+  "version": "0.2.0",
+  "description": "Enterprise Data Intersive Scalable Systems",
+  "main": "server.js",
+  "dependencies": {
+	  "express" : "~4.13.0",
+	  "ejs" : "~2.3.4",
+	  "winston" : "~1.0.1",
+	  "mysql" : "~2.9.0",
+	  "body-parser" : "1.13.3"
+  },
+  "author": "egupta",
+  "license": "CMU",
+  "readmeFilename": "README.txt"
+}
