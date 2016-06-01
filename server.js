@@ -57,6 +57,13 @@ var parser = require('xmldoc');
  */
 var app= express();
 
+/**
+ * Running a https server.
+ */
+var https_options = {
+    key : fs.readFileSync('server.key'),
+    cert : fs.readFileSync('server.crt')
+}
 
 /**
  * Running port for the application 
@@ -109,5 +116,8 @@ require('./app/routes')(app, connection, logger, bodyParser, https, parser);
  * Runs the server on specified port
  * @param port
  */
-app.listen(port);
-logger.info('Server up and running on port ' + port + '!' );
+//app.listen(port);
+https.createServer(https_options, app).listen(port, function() {
+    logger.info('Server up and running on port ' + port + '!' );
+});
+
