@@ -31,13 +31,13 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                 {
                     'name' : 'toggl_start_date',
                     'description' : 'start date for fetching toggl data',
-                    'type' : 'YYYY-MM-DD',
+                    'type' : 'yyyy-MM-dd',
                     'mandatory' : 'no'
                 },
                 {
                     'name' : 'toggl_end_date',
-                    'description' : 'end date for fetching toggl data',
-                    'type' : 'YYYY-mm-DD',
+                    'description' : 'end date for fetching toggl data ',
+                    'type' : 'yyyy-MM-dd',
                     'mandatory' : 'no'
                 },
                 {
@@ -73,25 +73,25 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                 {
                     'name' : 'jira_due_date_start',
                     'description' : 'Start initial due date to be filtered on',
-                    'type' : 'YYYY-MM-DD',
+                    'type' : 'yyyy-MM-dd',
                     'mandatory' : 'yes'
                 },
                 {
                     'name': 'jira_due_date_end',
                     'description': 'End initial due date to be filtered on',
-                    'type': 'YYYY-MM-DD',
+                    'type': 'yyyy-MM-dd',
                     'mandatory': 'yes'
                 },
                 {
                     'name' : 'jira_resolution_date_start',
                     'description' : 'Start resolution date to be filtered on',
-                    'type' : 'YYYY-MM-DD',
+                    'type' : 'yyyy-MM-dd',
                     'mandatory' : 'no'
                 },
                 {
                     'name': 'jira_resolution_date_end',
                     'description': 'End resolution date to be filtered on',
-                    'type': 'YYYY-MM-DD',
+                    'type': 'yyyy-MM-dd',
                     'mandatory': 'no'
                 }
             ]
@@ -136,6 +136,9 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
             toggl_auth = request.query.toggl_token + ':' + connection.toggl_api_key;
         }
 
+        if (request.query.toggl_start_date && request.query.toggl_end_date) {
+            toggl_path += '&since=' + request.query.toggl_start_date + '&until=' + request.query.toggl_end_date;
+        }
         toggl_path += '&page=1';
 
         var toggl_options = {
@@ -203,6 +206,7 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
         var result = new Object();
         result.request = request.query;
         var toggl_data = new Array();
+        logger.info('### ### ### ### Toggl Request - ' + JSON.stringify(toggl_options));
         https.get(toggl_options, togglcallback);
 
         function togglcallback(res) {
@@ -223,7 +227,7 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                 } else {
                     logger.info('### ### ### ### Toggl data fetch complete.');
                     logger.info('### ### ### ### ### Fetching information from JIRA.');
-                    logger.info('### ### ### ### ### Querying JIRA on - ' + jira_options.path);
+                    logger.info('### ### ### ### ### Querying JIRA on - ' + JSON.stringify(jira_options));
                     https.get(jira_options, jiracallback);
                 }
 
@@ -285,15 +289,14 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                             }
                         }
                     }
+                    var item = new Object();
+                    item.toggl_description = toggl_item.description;
+                    item.toggl_user = toggl_item.user;
+                    item.toggl_start = toggl_item.start;
+                    item.toggl_end = toggl_item.end;
+                    item.toggl_tags = toggl_item.tag;
+                    item.toggl_duration = toggl_item.dur;
                     if (jira_index >= 0) {
-                        var item = new Object();
-                        item.toggl_description = toggl_item.description;
-                        item.toggl_user = toggl_item.user;
-                        item.toggl_start = toggl_item.start;
-                        item.toggl_end = toggl_item.end;
-                        item.toggl_tags = toggl_item.tag;
-                        item.toggl_duration = toggl_item.dur;
-
                         var jira_item = jira_items[jira_index];
                         item.jira_id = jira_item.childNamed('key').val;
                         item.jira_summary = jira_item.childNamed('summary').val;
@@ -319,8 +322,19 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                                 break;
                             }
                         }
-                        output_items.push(item);
+                    } else {
+                        item.jira_id = '';
+                        item.jira_summary = '';
+                        item.jira_created = '';
+                        item.jira_updated = '';
+                        item.jira_due = '';
+                        item.jira_estimated_time = '';
+                        item.jira_status = '';
+                        item.jira_description = '';
+                        item.jira_assignee = '';
+                        item.jira_initial_due_date = '';
                     }
+                    output_items.push(item);
                 }
                 logger.info('### ### ### ### ### ### ### ### ### ### JOGGLing Complete, sending data!');
                 logger.info('### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###');
