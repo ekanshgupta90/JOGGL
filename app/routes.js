@@ -53,6 +53,12 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                     'mandatory' : 'yes'
                 },
                 {
+                    'name' : 'toggl_project_id',
+                    'description' : 'Studio Project id for Toggl',
+                    'type' : 'string',
+                    'mandatory' : 'yes'
+                },
+                {
                     'name' : 'jira_username',
                     'description' : 'Username for JIRA authentication',
                     'type' : 'string',
@@ -93,12 +99,19 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                     'description': 'End resolution date to be filtered on',
                     'type': 'yyyy-MM-dd',
                     'mandatory': 'no'
+                },
+                {
+                    'name': 'jira_custom_fields',
+                    'description': 'Any customs fields created in JIRA required in output',
+                    'type': 'String Array',
+                    'mandatory': 'no'
                 }
             ]
         };
         var queries = [url];
         output.query_list = queries;
         response.json(output);
+        return;
     });
 
     /**
@@ -117,27 +130,38 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
             !request.query.toggl_token ||
             !request.query.toggl_workspace_id ||
             !request.query.jira_username ||
-            !request.query.jira_password) {
+            !request.query.jira_password ||
+            !request.query.toggl_project_id) {
             logger.error('### ### ### Validation failed!');
             result.status = 'failure';
             result.message = 'missing mandatory params, check / for param syntax';
             response.json(result);
+            return;
         }
 
         var toggl_path = '';
         var toggl_auth = '';
+        var jira_custom_fields = new Array();
         if (request.query.user_agent === 'aquornstudio') {
              toggl_path = '/reports/api/v2/details?user_agent=' + connection.toggl_user_agent
-                + '&workspace_id=' + connection.toggl_workspace_id;
+                + '&workspace_id=' + connection.toggl_workspace_id + '&project_ids=' + connection.toggl_project_id;
             toggl_auth = connection.toggl_token + ':' + connection.toggl_api_key;
+            jira_custom_fields.push('Initial Due Date');
+            jira_custom_fields.push('Completed Date');
         } else {
             toggl_path = '/reports/api/v2/details?user_agent=' + request.query.user_agent
-                + '&workspace_id=' + request.query.toggle_workspace_id;
+                + '&workspace_id=' + request.query.toggle_workspace_id + '&project_ids='
+                + request.query.toggl_project_id;
             toggl_auth = request.query.toggl_token + ':' + connection.toggl_api_key;
+            if (request.query.jira_custom_fields) {
+                jira_custom_fields = request.query['jira_custom_fields'];
+            }
         }
 
         if (request.query.toggl_start_date && request.query.toggl_end_date) {
             toggl_path += '&since=' + request.query.toggl_start_date + '&until=' + request.query.toggl_end_date;
+        } else {
+            toggl_path += '&since=2016-01-01';
         }
         toggl_path += '&page=1';
 
@@ -165,6 +189,7 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                 result.status = 'failure';
                 result.message = 'missing mandatory params for JIRA, check / for param syntax';
                 response.json(result);
+                return;
             } else {
                 jira_url += '\'Initial+Due+Date\'+>=+' + request.query.jira_due_date_start + '+AND+' +
                     '\'Initial+Due+Date\'+<=+' + request.query.jira_due_date_end;
@@ -188,7 +213,7 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
         }
         logger.info('### ### ### Fetching information from Toggl.');
 
-        jogglData(toggl_options, jira_options, request, response);
+        jogglData(toggl_options, jira_options, jira_custom_fields, request, response);
 	});
 
     /**
@@ -198,12 +223,13 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
      * @param request
      * @param response
      */
-    function jogglData(toggl_options, jira_options, request, response) {
+    function jogglData(toggl_options, jira_options, jira_custom_fields, request, response) {
         var toggl_body = "";
         var jira_body = "";
         var num_pages = 1;
         var page = 1;
         var result = new Object();
+        var jira_custom_key = {};
         result.request = request.query;
         var toggl_data = new Array();
         logger.info('### ### ### ### Toggl Request - ' + JSON.stringify(toggl_options));
@@ -238,6 +264,7 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                 result.status = 'failure';
                 result.message = 'Failed to query Toggl data at Page - ' + page + ' with error: ' + e;
                 response.json(result);
+                return;
             });
         }
 
@@ -249,13 +276,18 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                 var jira_key_map = new Object();
                 var output_items = new Array();
                 logger.info('### ### ### ### ### ### JIRA data fetch complete.');
-                if (!jira_body  || jira_body === '') {
+
+                var jira_xml = '';
+                try {
+                    jira_xml = new parser.XmlDocument(jira_body);
+                } catch(error) {
                     logger.error('### ### ### ### ### ### Ill framed JQL query, exiting!');
                     result.status = 'failure';
                     result.message = 'problem framing JIRA JQL query -> ' + jira_options.path;
                     response.json(result);
+                    return;
                 }
-                var jira_xml = new parser.XmlDocument(jira_body);
+
 
                 logger.info('### ### ### ### ### ### ### JOGGLing data.');
 
@@ -265,6 +297,13 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                 logger.info('### ### ### ### ### ### ### ### Creating JIRA data key index.');
                 for (i = 0; i < jira_items.length; i++) {
                     jira_key_map[jira_items[i].childNamed('key').val] = i;
+                }
+
+                logger.info('### ### ### ### ### ### ### ### Mapping JIRA custom key to attribute name.');
+                for (i = 0; i< jira_custom_fields.length; i++) {
+                    temp_custom_field = jira_custom_fields[i];
+                    temp_custom_field = temp_custom_field.replace(/ /g, '_');
+                    jira_custom_key[jira_custom_fields[i]] = 'jira_' + temp_custom_field.toLowerCase();
                 }
 
                 logger.info('### ### ### ### ### ### ### ### ### Mapping JIRA and Toggl data.');
@@ -316,10 +355,16 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                         var custom_fields = custom_fields.childrenNamed('customfield');
                         for (index = 0; index < custom_fields.length; index++) {
                             field = custom_fields[index];
-                            if (field.childNamed('customfieldname').val === 'Initial Due Date') {
-                                item.jira_initial_due_date = field.childNamed('customfieldvalues').
-                                childrenNamed('customfieldvalue')[0].val;
-                                break;
+                            for (var custom_key in jira_custom_key) {
+                                if (field.childNamed('customfieldname').val === custom_key.trim()) {
+                                    item[jira_custom_key[custom_key].trim()] = field.childNamed('customfieldvalues').
+                                    childrenNamed('customfieldvalue')[0].val;
+                                }
+                            }
+                        }
+                        for (var custom_key in jira_custom_key) {
+                            if (!item[jira_custom_key[custom_key].trim()]) {
+                                item[jira_custom_key[custom_key].trim()] = '';
                             }
                         }
                     } else {
@@ -332,7 +377,9 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                         item.jira_status = '';
                         item.jira_description = '';
                         item.jira_assignee = '';
-                        item.jira_initial_due_date = '';
+                        for (var custom_key in jira_custom_key) {
+                            item[jira_custom_key[custom_key].trim()] = '';
+                        }
                     }
                     output_items.push(item);
                 }
@@ -342,6 +389,7 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                 result.message = '';
                 result['result'] = output_items;
                 response.json(result);
+                return;
             });
             res.on('error', function(error) {
                 logger.error('## ### ### ### XXX' + e);
@@ -349,6 +397,7 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                 result.status = 'failure';
                 result.message = 'Failed to query JIRA data with error: ' + e;
                 response.json(result);
+                return;
             });
         }
     }
