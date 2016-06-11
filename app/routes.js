@@ -105,6 +105,12 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
                     'description': 'Any customs fields created in JIRA required in output',
                     'type': 'String Array',
                     'mandatory': 'no'
+                },
+                {
+                    'name': 'jira_max_results',
+                    'description': 'Maximum number of JIRA issue to be fetched',
+                    'type': 'String Array',
+                    'mandatory': 'no'
                 }
             ]
         };
@@ -182,7 +188,8 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
          * @type {string}
          */
         var jira_url = "/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=";
-        if (!request.query.jira_jql) {
+        if (!request.query.jira_jql &&
+            request.query.jira_jql != '') {
             if (!request.query.jira_due_date_start ||
                 !request.query.jira_due_date_end) {
                 logger.error('### ### ### Missing mandatory fields!');
@@ -203,7 +210,11 @@ module.exports = function (app, connection, logger, bodyParser, https, parser) {
         } else {
             jira_url += request.query.jira_jql;
         }
-        jira_url += '&tempMax=1000';
+        if (request.query.jira_max_results) {
+            jira_url += '&tempMax=' + request.query.jira_max_results;
+        } else {
+            jira_url += '&tempMax=2000';
+        }
         jira_url += '&os_username=' + request.query.jira_username+ '&os_password=' + request.query.jira_password;
 
         var jira_options = {
